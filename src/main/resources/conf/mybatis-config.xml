@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--设置日志-->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+
+    <typeAliases>
+        <!--domain包中的类名就是别名-->
+        <package name="com.southlion.domain" />
+    </typeAliases>
+
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <!-- 设置参数合理化，即使当页面为1时候，点击前一页无效，页面为最后一页时候，点击下一页无效 -->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+   
+    <mappers>
+        <!--加载dao包中的所有mapper文件-->
+        <package name="com.southlion.domain" />
+    </mappers>
+</configuration>

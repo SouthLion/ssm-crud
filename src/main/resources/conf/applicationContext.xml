@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--Spring配置文件:声明Service，dao，工具类，事务配置-->
+    <context:component-scan base-package="com.southlion" />
+
+    <context:property-placeholder location="classpath:conf/jdbc.properties"/>
+    <!-- 配置连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+    init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverclass}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:conf/mybatis-config.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="factory"/>
+        <property name="basePackage" value="com.southlion.dao"/>
+    </bean>
+
+<!--    事务控制的配置-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="factory"></constructor-arg>
+        <constructor-arg name="executorType" value="BATCH"></constructor-arg>
+    </bean>
+    <aop:config>
+        <!--切入点表达式-->
+        <aop:pointcut id="txPoint" expression="execution(* com.southlion.service..*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+    <!--配置事务增强，事务如何切入-->
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <!--所有方法都是事务方法-->
+            <tx:method name="*/"/>
+            <!--以get开始的所有方法-->
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+
+        <!--Spring配置文件的核心点(数据源、与mybatis的整合，事务控制)-->
+    </tx:advice>
+</beans>
