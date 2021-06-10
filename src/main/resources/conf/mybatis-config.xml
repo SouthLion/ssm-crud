@@ -26,6 +26,6 @@
    
     <mappers>
         <!--加载dao包中的所有mapper文件-->
-        <package name="com.southlion.domain" />
+        <package name="com.southlion.dao" />
     </mappers>
 </configuration>

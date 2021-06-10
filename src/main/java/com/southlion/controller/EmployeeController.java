@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -52,5 +53,23 @@ public Msg getEmpsWithJson(@RequestParam(value = "pn",defaultValue = "1")Integer
         PageInfo Info = new PageInfo(emps,5);
         model.addAttribute("pageInfo",Info);
         return "list";
+    }
+
+    @RequestMapping(value = "/emp",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg addEmp(Employee employee){
+        employeeService.addDept(employee);
+        return Msg.success();
+    }
+
+    @RequestMapping(value = "/checkuser")
+    @ResponseBody
+    public Msg checkEmp(@RequestParam("lastName") String lastName){
+        boolean b = employeeService.checkDesignatedEmp(lastName);
+        if(b){
+            return Msg.success();
+        }else{
+            return Msg.fail();
+        }
     }
 }

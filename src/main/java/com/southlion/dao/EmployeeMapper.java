@@ -91,4 +91,5 @@ public interface EmployeeMapper {
      * @mbg.generated Tue Jun 01 17:27:10 CST 2021
      */
     int updateByPrimaryKey(Employee record);
+
 }
